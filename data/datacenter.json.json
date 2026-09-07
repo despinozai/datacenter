@@ -1,0 +1,125 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.60851809699994, -33.63390163399998]
+      },
+      "properties": {
+        "OBJECTID": 1,
+        "Nombre_Per": "Centro de Almacenamiento de datos Puente Alto",
+        "Proponente": "Inmobiliaria STPA SPA",
+        "Combustibl": 756,
+        "Comuna": "Puente Alto",
+        "Región": "RM",
+        "Fecha_pres": 1788134400000,
+        "Estado_per": "En análisis",
+        "Este__m_": "350815",
+        "Norte__m_": "6277275"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.61900430099996, -33.08509652099997]
+      },
+      "properties": {
+        "OBJECTID": 2,
+        "Nombre_Per": "Data Center La Polvora",
+        "Proponente": "DCI La Polvora SpA",
+        "Combustibl": 990,
+        "Comuna": "Valparaíso",
+        "Región": "Valparaíso",
+        "Fecha_pres": 1785369600000,
+        "Estado_per": "En análisis",
+        "Este__m_": "255544",
+        "Norte__m_": "6336228"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.72129246299994, -33.52139905799993]
+      },
+      "properties": {
+        "OBJECTID": 3,
+        "Nombre_Per": "Data Center Cerrillos",
+        "Proponente": "Inversiones y Servicios Data Luna Ltda",
+        "Combustibl": 696,
+        "Comuna": "Cerrillos",
+        "Región": "RM",
+        "Fecha_pres": 1785283200000,
+        "Estado_per": "En análisis",
+        "Este__m_": "340147",
+        "Norte__m_": "6289582"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.765173, -33.321372]
+      },
+      "properties": {
+        "OBJECTID": 4,
+        "Nombre_Per": "Campo de Datos Lampa",
+        "Proponente": "CI GMF II Chile DevCo I SpA",
+        "Combustibl": 511,
+        "Comuna": "Lampa",
+        "Región": "RM",
+        "Fecha_pres": 1783900800000,
+        "Estado_per": "En análisis",
+        "Este__m_": "335694.88",
+        "Norte__m_": "6311694.26"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.69472494299998, -33.70663339999993]
+      },
+      "properties": {
+        "OBJECTID": 5,
+        "Nombre_Per": "Data Center Alto Jahuel Campus Sur",
+        "Proponente": "GR Huiña SPA",
+        "Combustibl": 995,
+        "Comuna": "Buin",
+        "Región": "RM",
+        "Fecha_pres": 1780012800000,
+        "Estado_per": "En análisis",
+        "Este__m_": "342951",
+        "Norte__m_": "6269082"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.68968290099997, -33.71858797899995]
+      },
+      "properties": {
+        "OBJECTID": 6,
+        "Nombre_Per": "Habilitación Data Center Alto Jahuel",
+        "Proponente": "DC Terranova SPA",
+        "Combustibl": 990,
+        "Comuna": "Buin",
+        "Región": "RM",
+        "Fecha_pres": 1777939200000,
+        "Estado_per": "Resuelto sin ingreso SEIA",
+        "Este__m_": "343440",
+        "Norte__m_": "6267764"
+      }
+    }
+  ]
+}
