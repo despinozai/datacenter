@@ -26,7 +26,6 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <style>
-        /* Estilos para popups de Leaflet */
         .custom-leaflet-popup .leaflet-popup-content-wrapper {
             border: 2px solid #166FDD !important;
             border-radius: 0 !important;
@@ -60,14 +59,12 @@
             background: #166FDD;
         }
 
-        /* Asegurar que el mapa ocupe todo el espacio */
         #map {
             height: 580px;
             width: 100%;
             background-color: #f0f0f0;
         }
 
-        /* Estilo para los marcadores individuales (puntos naranjas) */
         .data-marker {
             background-color: #F66C1A;
             width: 16px;
@@ -77,7 +74,6 @@
             box-shadow: 0 0 0 2px #166FDD;
         }
 
-        /* Estilo para los clusters (mantener el color naranja) */
         .marker-cluster {
             background-color: rgba(246, 108, 26, 0.6);
         }
@@ -87,6 +83,19 @@
             color: white;
             font-weight: bold;
             font-family: 'Archivo_Narrow', sans-serif;
+        }
+
+        /* Estilo para los polígonos */
+        .data-polygon {
+            color: #ffffff;
+            weight: 2;
+            opacity: 0.8;
+            fillColor: #fa5353;
+            fillOpacity: 0.15;
+        }
+
+        .data-polygon:hover {
+            fillOpacity: 0.3;
         }
     </style>
 </head>
@@ -149,7 +158,7 @@
                         <div class="flex items-center gap-2.5 py-1">
                             <div class="w-4 h-4 rounded-full bg-[#F66C1A] border-2 border-white shadow-sm shrink-0">
                             </div>
-                            <span class="text-[11px] font-bold text-[#1a1c1c] uppercase">Data Center</span>
+                            <span class="text-[11px] font-bold text-[#1a1c1c] uppercase">Centroide del Polígono</span>
                         </div>
                     </div>
                     <div class="flex flex-col gap-1.5 pt-2 border-t border-[#166FDD]/20">
@@ -159,6 +168,14 @@
                                 class="w-6 h-6 rounded-full bg-[#F66C1A] border-2 border-white shadow-sm shrink-0 flex items-center justify-center text-white text-[10px] font-bold">
                                 N</div>
                             <span class="text-[11px] font-bold text-[#1a1c1c] uppercase">Proyectos Cercanos</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1.5 pt-2 border-t border-[#166FDD]/20">
+                        <span class="font-semibold uppercase text-[10px] text-[#4c4546]">Área del Proyecto</span>
+                        <div class="flex items-center gap-2.5 py-1">
+                            <div class="w-6 h-4 bg-[#166FDD] border border-[#166FDD] opacity-30 shrink-0">
+                            </div>
+                            <span class="text-[11px] font-bold text-[#1a1c1c] uppercase">Polígono</span>
                         </div>
                     </div>
                 </div>
@@ -185,107 +202,385 @@
     </div>
 
     <script>
-        // ================== DATOS ==================
-        const rawGeoJSON = {
+        // ================== DATOS INCRUSTADOS (GeoJSON con polígonos) ==================
+        const geoJSONData = {
             "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "id": 1,
-                    "geometry": { "type": "Point", "coordinates": [-70.60851809699994, -33.63390163399998] },
-                    "properties": {
-                        "OBJECTID": 1,
-                        "Nombre_Per": "Centro de Almacenamiento de datos Puente Alto",
-                        "Proponente": "Inmobiliaria STPA SPA",
-                        "Combustibl": 756,
-                        "Comuna": "Puente Alto",
-                        "Región": "RM",
-                        "Fecha_pres": 1788134400000,
-                        "Estado_per": "En análisis"
-                    }
+            "features": [{
+                "type": "Feature",
+                "id": 0,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-70.606277236999972, -33.633642038999938, 0, null],
+                            [-70.606375584999967, -33.633654122999928, 0, null],
+                            [-70.607091498999978, -33.633735567999963, 0, null],
+                            [-70.607350571999973, -33.632431331999953, 0, null],
+                            [-70.60877398699995, -33.632627653999975, 0, null],
+                            [-70.608518649999951, -33.633894302999977, 0, null],
+                            [-70.610916552999981, -33.634088009999971, 0, null],
+                            [-70.610802902999978, -33.634696296999948, 0, null],
+                            [-70.611201301999984, -33.634884267999951, 0, null],
+                            [-70.611134784999933, -33.635316246999935, 0, null],
+                            [-70.611189276999937, -33.635350998999968, 0, null],
+                            [-70.611164250999934, -33.635513426999978, 0, null],
+                            [-70.610938393999959, -33.637010122999982, 0, null],
+                            [-70.606377924999947, -33.636477766999974, 0, null],
+                            [-70.604910665999967, -33.636308613999972, 0, null],
+                            [-70.60515692499996, -33.635191041999974, 0, null],
+                            [-70.605509280999968, -33.633552660999953, 0, null],
+                            [-70.605800776999956, -33.632210592999968, 0, null],
+                            [-70.606531746999963, -33.632318550999969, 0, null],
+                            [-70.606277236999972, -33.633642038999938, 0, null]
+                        ]
+                    ]
                 },
-                {
-                    "type": "Feature",
-                    "id": 2,
-                    "geometry": { "type": "Point", "coordinates": [-71.61900430099996, -33.08509652099997] },
-                    "properties": {
-                        "OBJECTID": 2,
-                        "Nombre_Per": "Data Center La Polvora",
-                        "Proponente": "DCI La Polvora SpA",
-                        "Combustibl": 990,
-                        "Comuna": "Valparaíso",
-                        "Región": "Valparaíso",
-                        "Fecha_pres": 1785369600000,
-                        "Estado_per": "En análisis"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "id": 3,
-                    "geometry": { "type": "Point", "coordinates": [-70.72129246299994, -33.52139905799993] },
-                    "properties": {
-                        "OBJECTID": 3,
-                        "Nombre_Per": "Data Center Cerrillos",
-                        "Proponente": "Inversiones y Servicios Data Luna Ltda",
-                        "Combustibl": 696,
-                        "Comuna": "Cerrillos",
-                        "Región": "RM",
-                        "Fecha_pres": 1785283200000,
-                        "Estado_per": "En análisis"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "id": 4,
-                    "geometry": { "type": "Point", "coordinates": [-70.765173, -33.321372] },
-                    "properties": {
-                        "OBJECTID": 4,
-                        "Nombre_Per": "Campo de Datos Lampa",
-                        "Proponente": "CI GMF II Chile DevCo I SpA",
-                        "Combustibl": 511,
-                        "Comuna": "Lampa",
-                        "Región": "RM",
-                        "Fecha_pres": 1783900800000,
-                        "Estado_per": "En análisis"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "id": 5,
-                    "geometry": { "type": "Point", "coordinates": [-70.69472494299998, -33.70663339999993] },
-                    "properties": {
-                        "OBJECTID": 5,
-                        "Nombre_Per": "Data Center Alto Jahuel Campus Sur",
-                        "Proponente": "GR Huiña SPA",
-                        "Combustibl": 995,
-                        "Comuna": "Buin",
-                        "Región": "RM",
-                        "Fecha_pres": 1780012800000,
-                        "Estado_per": "En análisis"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "id": 6,
-                    "geometry": { "type": "Point", "coordinates": [-70.68968290099997, -33.71858797899995] },
-                    "properties": {
-                        "OBJECTID": 6,
-                        "Nombre_Per": "Habilitación Data Center Alto Jahuel",
-                        "Proponente": "DC Terranova SPA",
-                        "Combustibl": 990,
-                        "Comuna": "Buin",
-                        "Región": "RM",
-                        "Fecha_pres": 1777939200000,
-                        "Estado_per": "Resuelto sin ingreso SEIA"
-                    }
+                "properties": {
+                    "FID": 0,
+                    "Nombre_Per": "Centro de Almacenamiento de datos Puente Alto",
+                    "Proponente": "Inmobiliaria STPA SPA",
+                    "Combustibl": 756,
+                    "Comuna": "Puente Alto",
+                    "Región": "RM",
+                    "Fecha_pres": 1788134400000,
+                    "Estado_per": "En análisis"
                 }
-            ]
+            }, {
+                "type": "Feature",
+                "id": 1,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-71.620690449999984, -33.085948153999936, 0, null],
+                            [-71.619958099999963, -33.086076272999946, 0, null],
+                            [-71.618753155999968, -33.085717010999929, 0, null],
+                            [-71.619153447999963, -33.084400581999944, 0, null],
+                            [-71.619681878999984, -33.083348248999982, 0, null],
+                            [-71.619941048999976, -33.083141759999933, 0, null],
+                            [-71.620183084999951, -33.083254046999969, 0, null],
+                            [-71.620550575999971, -33.083753007999974, 0, null],
+                            [-71.620922924999945, -33.084961075999956, 0, null],
+                            [-71.620991889999971, -33.085422213999948, 0, null],
+                            [-71.620690449999984, -33.085948153999936, 0, null]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "FID": 1,
+                    "Nombre_Per": "Data Center La Polvora",
+                    "Proponente": "DCI La Polvora SpA",
+                    "Combustibl": 990,
+                    "Comuna": "Valparaíso",
+                    "Región": "Valparaíso",
+                    "Fecha_pres": 1785369600000,
+                    "Estado_per": "En análisis"
+                }
+            }, {
+                "type": "Feature",
+                "id": 2,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-70.723642551999944, -33.524701461999939, 0, null],
+                            [-70.721283315999983, -33.521426743999939, 0, null],
+                            [-70.717476993999981, -33.522664295999959, 0, null],
+                            [-70.716371319999951, -33.520672309999952, 0, null],
+                            [-70.721867048999968, -33.518852404999961, 0, null],
+                            [-70.725728126999968, -33.523862254999983, 0, null],
+                            [-70.723642551999944, -33.524701461999939, 0, null]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "FID": 2,
+                    "Nombre_Per": "Data Center Cerrillos",
+                    "Proponente": "Inversiones y Servicios Data Luna Ltda",
+                    "Combustibl": 696,
+                    "Comuna": "Cerrillos",
+                    "Región": "RM",
+                    "Fecha_pres": 1785283200000,
+                    "Estado_per": "En análisis"
+                }
+            }, {
+                "type": "Feature",
+                "id": 3,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-70.765261341999974, -33.321242849999976, 0, null],
+                            [-70.768189011999937, -33.313922913999932, 0, null],
+                            [-70.771778412999936, -33.315798633999975, 0, null],
+                            [-70.769961169999988, -33.317066816999954, 0, null],
+                            [-70.766761663999944, -33.322441792999939, 0, null],
+                            [-70.765261341999974, -33.321242849999976, 0, null]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "FID": 3,
+                    "Nombre_Per": "Campo de Datos Lampa",
+                    "Proponente": "CI GMF II Chile DevCo I SpA",
+                    "Combustibl": 511,
+                    "Comuna": "Lampa",
+                    "Región": "RM",
+                    "Fecha_pres": 1783900800000,
+                    "Estado_per": "En análisis"
+                }
+            }, {
+                "type": "Feature",
+                "id": 4,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-70.695998961999976, -33.708259098999974, 0, null],
+                            [-70.69590448799994, -33.708279206999975, 0, null],
+                            [-70.695576034999988, -33.708349114999976, 0, null],
+                            [-70.695552189999944, -33.708354189999966, 0, null],
+                            [-70.69535497399994, -33.708396164999954, 0, null],
+                            [-70.69534456599996, -33.708398380999938, 0, null],
+                            [-70.695297572999948, -33.708408381999959, 0, null],
+                            [-70.695220364999955, -33.708167601999946, 0, null],
+                            [-70.695213526999964, -33.708149386999935, 0, null],
+                            [-70.695193630999938, -33.708087362999947, 0, null],
+                            [-70.69518581799997, -33.708059858999945, 0, null],
+                            [-70.694727951999937, -33.70663191999995, 0, null],
+                            [-70.694813470999975, -33.706611763999945, 0, null],
+                            [-70.694849326999986, -33.70660331299996, 0, null],
+                            [-70.695144555999946, -33.706533727999954, 0, null],
+                            [-70.695509680999976, -33.706447667999953, 0, null],
+                            [-70.698587411999938, -33.705722197999933, 0, null],
+                            [-70.698819278999963, -33.705667539999979, 0, null],
+                            [-70.698847412999953, -33.70566090799997, 0, null],
+                            [-70.698880324999948, -33.705653148999943, 0, null],
+                            [-70.698882189999949, -33.705663968999943, 0, null],
+                            [-70.698884046999979, -33.705674789999932, 0, null],
+                            [-70.698885897999958, -33.705685610999979, 0, null],
+                            [-70.698887738999986, -33.705696433999947, 0, null],
+                            [-70.698889572999974, -33.705707257999961, 0, null],
+                            [-70.69889139999998, -33.705718081999976, 0, null],
+                            [-70.698893217999967, -33.705728907999969, 0, null],
+                            [-70.698895028999971, -33.705739733999962, 0, null],
+                            [-70.698896831999946, -33.705750560999945, 0, null],
+                            [-70.698898627999938, -33.705761389999964, 0, null],
+                            [-70.698900415999958, -33.705772218999982, 0, null],
+                            [-70.69890219499996, -33.705783048999933, 0, null],
+                            [-70.698903967999968, -33.705793879999931, 0, null],
+                            [-70.698905731999957, -33.705804710999928, 0, null],
+                            [-70.698907488999964, -33.705815543999961, 0, null],
+                            [-70.698909237999942, -33.705826377999983, 0, null],
+                            [-70.698910978999947, -33.705837211999949, 0, null],
+                            [-70.698912711999981, -33.705848046999961, 0, null],
+                            [-70.698914437999974, -33.705858882999962, 0, null],
+                            [-70.698916155999939, -33.705869719999953, 0, null],
+                            [-70.698917864999942, -33.705880557999933, 0, null],
+                            [-70.698919567999951, -33.705891396999959, 0, null],
+                            [-70.698921262999988, -33.705902235999929, 0, null],
+                            [-70.69892294899995, -33.705913076999934, 0, null],
+                            [-70.698924628999976, -33.705923917999939, 0, null],
+                            [-70.698926299999982, -33.705934759999934, 0, null],
+                            [-70.69892796299996, -33.705945602999975, 0, null],
+                            [-70.698929618999955, -33.705956446999949, 0, null],
+                            [-70.698931267999967, -33.705967290999979, 0, null],
+                            [-70.698932907999961, -33.705978136999931, 0, null],
+                            [-70.698934539999982, -33.705988982999941, 0, null],
+                            [-70.698936163999974, -33.705999829999939, 0, null],
+                            [-70.698937780999984, -33.706010677999984, 0, null],
+                            [-70.698939390999954, -33.706021525999972, 0, null],
+                            [-70.698940991999962, -33.706032375999939, 0, null],
+                            [-70.698942584999941, -33.706043225999963, 0, null],
+                            [-70.698944170999937, -33.706054076999976, 0, null],
+                            [-70.698945748999961, -33.706064928999979, 0, null],
+                            [-70.698947319999945, -33.706075781999971, 0, null],
+                            [-70.698948881999968, -33.706086634999963, 0, null],
+                            [-70.698950436999951, -33.706097488999944, 0, null],
+                            [-70.698951983999962, -33.706108343999972, 0, null],
+                            [-70.698953522999943, -33.706119199999932, 0, null],
+                            [-70.698955053999953, -33.706130055999949, 0, null],
+                            [-70.698956577999979, -33.706140912999956, 0, null],
+                            [-70.698958093999977, -33.706151771999942, 0, null],
+                            [-70.698959601999945, -33.706162629999938, 0, null],
+                            [-70.698961101999942, -33.706173489999969, 0, null],
+                            [-70.698962594999955, -33.706184349999944, 0, null],
+                            [-70.698964079999939, -33.706195210999965, 0, null],
+                            [-70.698965556999951, -33.706206072999976, 0, null],
+                            [-70.698967025999934, -33.706216934999929, 0, null],
+                            [-70.698968486999945, -33.706227798999976, 0, null],
+                            [-70.698969939999984, -33.706238662999965, 0, null],
+                            [-70.698971386999972, -33.706249526999954, 0, null],
+                            [-70.698972824999942, -33.70626039299998, 0, null],
+                            [-70.698974254999939, -33.706271258999948, 0, null],
+                            [-70.698975677999954, -33.706282125999962, 0, null],
+                            [-70.69897709199995, -33.706292992999977, 0, null],
+                            [-70.698978498999963, -33.706303860999981, 0, null],
+                            [-70.698979898999937, -33.706314729999974, 0, null],
+                            [-70.698981289999949, -33.706325599999957, 0, null],
+                            [-70.698982673999978, -33.70633646999994, 0, null],
+                            [-70.698984048999932, -33.706347340999969, 0, null],
+                            [-70.69898541799995, -33.70635821299993, 0, null],
+                            [-70.698986777999949, -33.706369085999938, 0, null],
+                            [-70.698988129999975, -33.706379958999946, 0, null],
+                            [-70.698989474999962, -33.706390831999954, 0, null],
+                            [-70.698990811999977, -33.706401706999941, 0, null],
+                            [-70.698992140999962, -33.706412581999984, 0, null],
+                            [-70.698993461999976, -33.706423457999961, 0, null],
+                            [-70.69899477599995, -33.706434333999937, 0, null],
+                            [-70.698996080999962, -33.706445210999959, 0, null],
+                            [-70.698997378999934, -33.706456088999971, 0, null],
+                            [-70.698998668999934, -33.706466966999983, 0, null],
+                            [-70.698999951999951, -33.706477845999984, 0, null],
+                            [-70.69900122599995, -33.706488725999975, 0, null],
+                            [-70.699002492999966, -33.706499605999966, 0, null],
+                            [-70.699003751999953, -33.706510486999946, 0, null],
+                            [-70.699005002999968, -33.706521368999972, 0, null],
+                            [-70.699006245999954, -33.706532250999942, 0, null],
+                            [-70.699007481999956, -33.706543133999958, 0, null],
+                            [-70.699008709999987, -33.706554016999974, 0, null],
+                            [-70.699009929999988, -33.706564900999979, 0, null],
+                            [-70.699011141999961, -33.706575785999974, 0, null],
+                            [-70.699012345999961, -33.706586670999968, 0, null],
+                            [-70.699013542999978, -33.706597556999952, 0, null],
+                            [-70.699014731999966, -33.706608442999936, 0, null],
+                            [-70.699015912999982, -33.706619329999967, 0, null],
+                            [-70.699017085999969, -33.70663021799993, 0, null],
+                            [-70.699018251999973, -33.70664110599995, 0, null],
+                            [-70.699019408999959, -33.706651994999959, 0, null],
+                            [-70.699020558999962, -33.706662883999968, 0, null],
+                            [-70.699021699999946, -33.706673773999967, 0, null],
+                            [-70.699022834999937, -33.706684664999955, 0, null],
+                            [-70.699023961999956, -33.706695555999943, 0, null],
+                            [-70.699025079999956, -33.706706446999931, 0, null],
+                            [-70.699026190999973, -33.706717338999965, 0, null],
+                            [-70.699027293999961, -33.706728231999932, 0, null],
+                            [-70.699028388999977, -33.706739124999956, 0, null],
+                            [-70.699029475999964, -33.706750018999969, 0, null],
+                            [-70.699030555999968, -33.706760913999972, 0, null],
+                            [-70.699031627999943, -33.706771808999974, 0, null],
+                            [-70.699032692999936, -33.706782703999977, 0, null],
+                            [-70.699033747999977, -33.706793599999969, 0, null],
+                            [-70.699034796999968, -33.706804496999951, 0, null],
+                            [-70.69903583699994, -33.706815393999932, 0, null],
+                            [-70.699036869999986, -33.70682629099997, 0, null],
+                            [-70.699037894999947, -33.706837188999941, 0, null],
+                            [-70.699038911999935, -33.706848087999958, 0, null],
+                            [-70.69903992199994, -33.706858986999976, 0, null],
+                            [-70.699040922999984, -33.706869885999936, 0, null],
+                            [-70.699041916999988, -33.706880785999942, 0, null],
+                            [-70.699042902999963, -33.706891686999938, 0, null],
+                            [-70.699043880999966, -33.706902587999934, 0, null],
+                            [-70.699044851999986, -33.706913489999977, 0, null],
+                            [-70.699045813999987, -33.706924391999962, 0, null],
+                            [-70.699046768999949, -33.706935293999948, 0, null],
+                            [-70.699047715999939, -33.706946196999979, 0, null],
+                            [-70.699048655999945, -33.706957100999944, 0, null],
+                            [-70.699049585999944, -33.706968004999965, 0, null],
+                            [-70.69905050999995, -33.706978908999929, 0, null],
+                            [-70.699051424999936, -33.70698981399994, 0, null],
+                            [-70.699052332999941, -33.70700071899995, 0, null],
+                            [-70.699053232999972, -33.70701162499995, 0, null],
+                            [-70.699054125999965, -33.70702253099995, 0, null],
+                            [-70.699055009999938, -33.707033437999939, 0, null],
+                            [-70.699055886999986, -33.707044344999929, 0, null],
+                            [-70.699056754999958, -33.707055251999975, 0, null],
+                            [-70.699057615999948, -33.707066159999954, 0, null],
+                            [-70.699058469999954, -33.707077068999979, 0, null],
+                            [-70.699059314999943, -33.707087977999947, 0, null],
+                            [-70.699060152999948, -33.707098886999972, 0, null],
+                            [-70.699060981999935, -33.70710979699993, 0, null],
+                            [-70.699061803999939, -33.707120706999945, 0, null],
+                            [-70.699062617999971, -33.707131616999959, 0, null],
+                            [-70.699063424999963, -33.707142527999963, 0, null],
+                            [-70.699064222999937, -33.707153438999967, 0, null],
+                            [-70.699065013999984, -33.70716435099996, 0, null],
+                            [-70.699065796999946, -33.707175262999954, 0, null],
+                            [-70.699066571999936, -33.707186175999936, 0, null],
+                            [-70.699067338999953, -33.70719708799993, 0, null],
+                            [-70.699068097999941, -33.707208001999959, 0, null],
+                            [-70.699068849999946, -33.707218914999942, 0, null],
+                            [-70.69906959399998, -33.707229828999971, 0, null],
+                            [-70.699070329999984, -33.707240743999932, 0, null],
+                            [-70.699071057999959, -33.707251657999961, 0, null],
+                            [-70.699071777999961, -33.70726257299998, 0, null],
+                            [-70.699072490999981, -33.707273488999931, 0, null],
+                            [-70.699073195999972, -33.707284404999939, 0, null],
+                            [-70.699073891999944, -33.707295320999947, 0, null],
+                            [-70.699074580999934, -33.707306236999955, 0, null],
+                            [-70.699075262999941, -33.707317153999952, 0, null],
+                            [-70.699075935999986, -33.707328070999949, 0, null],
+                            [-70.699076600999945, -33.707338988999936, 0, null],
+                            [-70.699077259999967, -33.70734990699998, 0, null],
+                            [-70.699077908999982, -33.707360824999967, 0, null],
+                            [-70.699078551999946, -33.707371742999953, 0, null],
+                            [-70.699079185999949, -33.707382661999929, 0, null],
+                            [-70.699079811999979, -33.707393580999963, 0, null],
+                            [-70.69908043099997, -33.707404500999928, 0, null],
+                            [-70.699081027999966, -33.707415183999956, 0, null],
+                            [-70.699085225999966, -33.707494398999984, 0, null],
+                            [-70.699085646999947, -33.707502788999932, 0, null],
+                            [-70.699086187999967, -33.707513710999933, 0, null],
+                            [-70.699086719999968, -33.707524633999981, 0, null],
+                            [-70.699087244999987, -33.707535556999972, 0, null],
+                            [-70.699087761999976, -33.707546479999962, 0, null],
+                            [-70.699088270999937, -33.707557402999953, 0, null],
+                            [-70.699088772999971, -33.707568326999933, 0, null],
+                            [-70.699089265999987, -33.70757925099997, 0, null],
+                            [-70.699089751999963, -33.70759017499995, 0, null],
+                            [-70.699090229999968, -33.70760109899993, 0, null],
+                            [-70.698532070999988, -33.707719913999938, 0, null],
+                            [-70.698453190999942, -33.707736704999945, 0, null],
+                            [-70.69766472799995, -33.70790453799998, 0, null],
+                            [-70.697601954999982, -33.707917900999973, 0, null],
+                            [-70.695998961999976, -33.708259098999974, 0, null]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "FID": 4,
+                    "Nombre_Per": "Data Center Alto Jahuel Campus Sur",
+                    "Proponente": "GR Huiña SPA",
+                    "Combustibl": 995,
+                    "Comuna": "Buin",
+                    "Región": "RM",
+                    "Fecha_pres": 1780012800000,
+                    "Estado_per": "En análisis"
+                }
+            }, {
+                "type": "Feature",
+                "id": 5,
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [-70.687782178999953, -33.722000296999965, 0, null],
+                            [-70.686970153999937, -33.718272377999938, 0, null],
+                            [-70.690770320999945, -33.717311007999967, 0, null],
+                            [-70.691520440999966, -33.720704840999929, 0, null],
+                            [-70.687782178999953, -33.722000296999965, 0, null]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "FID": 5,
+                    "Nombre_Per": "Habilitación Data Center Alto Jahuel",
+                    "Proponente": "DC Terranova SPA",
+                    "Combustibl": 990,
+                    "Comuna": "Buin",
+                    "Región": "RM",
+                    "Fecha_pres": 1777939200000,
+                    "Estado_per": "Resuelto sin ingreso SEIA"
+                }
+            }]
         };
 
+        // ================== VARIABLES GLOBALES ==================
         let featuresData = [];
         let mapInstance = null;
         let markerClusterGroup = null;
         let allMarkers = [];
+        let polygonLayerGroup = null;
 
         // ================== FUNCIONES AUXILIARES ==================
         function fmt(n) {
@@ -300,7 +595,6 @@
         }
 
         function createPopupHTML(props) {
-            const isOk = props.Estado_per === 'En análisis';
             return `
                 <div class="font-['Hanken_Grotesk'] text-[#1a1c1c]">
                     <div class="font-['Archivo_Narrow'] text-[11px] font-bold text-[#166FDD] uppercase tracking-wider mb-1">
@@ -320,28 +614,37 @@
             `;
         }
 
-        // ================== INICIALIZACIÓN ==================
-        document.addEventListener('DOMContentLoaded', async () => {
-            let data = rawGeoJSON;
-            try {
-                let res = await fetch('data/datacenter.geojson');
-                if (!res || !res.ok) {
-                    res = await fetch('datacenter.geojson');
-                }
-                if (res.ok) {
-                    const fetched = await res.json();
-                    fetched.features.forEach((f, idx) => {
-                        if (!f.geometry?.coordinates || f.geometry.coordinates.length < 2) {
-                            if (rawGeoJSON.features[idx]) f.geometry = rawGeoJSON.features[idx].geometry;
-                        }
-                    });
-                    data = fetched;
-                }
-            } catch (e) {
-                console.warn('Cargando fallback local:', e);
-            }
+        // ================== CALCULAR CENTROIDE DE UN POLÍGONO ==================
+        function getPolygonCenter(coordinates) {
+            // La primera coordenada es el anillo exterior
+            const ring = coordinates[0];
+            let latSum = 0,
+                lngSum = 0;
+            let count = 0;
 
-            featuresData = data.features;
+            // Eliminar el último punto si es igual al primero (cierre del polígono)
+            const points = ring.length > 0 && 
+                ring[0][0] === ring[ring.length - 1][0] && 
+                ring[0][1] === ring[ring.length - 1][1] ? 
+                ring.slice(0, -1) : ring;
+
+            points.forEach(coord => {
+                // coord = [lng, lat, 0, null]
+                lngSum += coord[0];
+                latSum += coord[1];
+                count++;
+            });
+
+            return {
+                lat: latSum / count,
+                lng: lngSum / count
+            };
+        }
+
+        // ================== INICIALIZACIÓN ==================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Usar los datos incrustados
+            featuresData = geoJSONData.features;
             initApp();
         });
 
@@ -380,7 +683,6 @@
 
         // ================== MAPA (LEAFLET) ==================
         function initMap() {
-            // Inicializar el mapa
             mapInstance = L.map('map', {
                 center: [-33.45, -70.80],
                 zoom: 8,
@@ -389,23 +691,23 @@
                 zoomControl: false
             });
 
-            // Agregar control de zoom manualmente
             L.control.zoom({ position: 'topright' }).addTo(mapInstance);
 
-            // Capa base: Esri World Imagery
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             }).addTo(mapInstance);
 
-            // Crear el grupo de clusters
+            // Grupo para polígonos
+            polygonLayerGroup = L.layerGroup().addTo(mapInstance);
+
+            // Grupo de clusters para marcadores
             markerClusterGroup = L.markerClusterGroup({
                 showCoverageOnHover: false,
                 zoomToBoundsOnClick: true,
                 spiderfyOnMaxZoom: true,
                 removeOutsideVisibleBounds: true,
                 animateAddingMarkers: true,
-                // Personalizar el ícono de los clusters
-                iconCreateFunction: function (cluster) {
+                iconCreateFunction: function(cluster) {
                     const count = cluster.getChildCount();
                     return L.divIcon({
                         html: `<div><span>${count}</span></div>`,
@@ -415,45 +717,78 @@
                 }
             });
 
-            // Crear marcadores individuales
+            // Procesar cada feature (polígono)
             featuresData.forEach((feature) => {
                 const coords = feature.geometry.coordinates;
                 const props = feature.properties;
 
-                // Crear el ícono personalizado (punto naranja)
+                if (!coords || coords.length === 0) {
+                    console.warn('Coordenadas inválidas para el feature:', feature);
+                    return;
+                }
+
+                // ====== 1. DIBUJAR EL POLÍGONO ======
+                // Extraer el anillo exterior (coords[0])
+                const ring = coords[0];
+                // Limpiar las coordenadas: [lng, lat, 0, null] -> [lat, lng]
+                const latLngs = ring.map(coord => [coord[1], coord[0]]);
+                
+                const polygon = L.polygon(latLngs, {
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 0.8,
+                    fillColor: '#fa5353',
+                    fillOpacity: 0.5,
+                    className: 'data-polygon'
+                });
+
+                // Añadir popup al polígono
+                polygon.bindPopup(createPopupHTML(props), {
+                    className: 'custom-leaflet-popup',
+                    maxWidth: 320,
+                    minWidth: 200
+                });
+
+                // Guardar datos en el polígono para filtros
+                polygon.featureData = feature;
+                polygonLayerGroup.addLayer(polygon);
+
+                // ====== 2. CREAR MARCADOR EN EL CENTROIDE ======
+                const center = getPolygonCenter(coords);
+
                 const markerIcon = L.divIcon({
                     className: 'data-marker',
                     iconSize: [16, 16],
                     iconAnchor: [8, 8]
                 });
 
-                const marker = L.marker([coords[1], coords[0]], {
+                const marker = L.marker([center.lat, center.lng], {
                     icon: markerIcon
                 });
 
-                // Agregar popup
                 marker.bindPopup(createPopupHTML(props), {
                     className: 'custom-leaflet-popup',
                     maxWidth: 320,
                     minWidth: 200
                 });
 
-                // Guardar los datos en el marker para usarlos en filtros
                 marker.featureData = feature;
                 allMarkers.push(marker);
             });
 
-            // Agregar todos los marcadores al cluster
-            markerClusterGroup.addLayers(allMarkers);
-            mapInstance.addLayer(markerClusterGroup);
+            // Agregar marcadores al cluster
+            if (allMarkers.length > 0) {
+                markerClusterGroup.addLayers(allMarkers);
+                mapInstance.addLayer(markerClusterGroup);
 
-            // Ajustar la vista para mostrar todos los puntos
-            const bounds = L.latLngBounds(
-                allMarkers.map(m => m.getLatLng())
-            );
-            mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
+                const bounds = L.latLngBounds(
+                    allMarkers.map(m => m.getLatLng())
+                );
+                mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
+            } else {
+                document.getElementById('mapCount').textContent = 'No hay datos para mostrar';
+            }
 
-            // Actualizar contador
             document.getElementById('mapCount').textContent = `${fmt(featuresData.length)} de ${fmt(featuresData.length)} proyectos`;
             updateCompanyList(featuresData);
         }
@@ -474,9 +809,11 @@
                 return true;
             });
 
-            // Actualizar el mapa: remover todos los marcadores y agregar solo los filtrados
+            // Limpiar capas
             markerClusterGroup.clearLayers();
+            polygonLayerGroup.clearLayers();
 
+            // Filtrar marcadores
             const filteredMarkers = allMarkers.filter(marker => {
                 const props = marker.featureData.properties;
                 if (fR && (props.Región || props.Regin) !== fR) return false;
@@ -486,10 +823,42 @@
                 return true;
             });
 
-            markerClusterGroup.addLayers(filteredMarkers);
+            // Volver a dibujar polígonos y marcadores filtrados
+            featuresData.forEach((feature) => {
+                const props = feature.properties;
+                // Verificar si el feature pasa el filtro
+                let passes = true;
+                if (fR && (props.Región || props.Regin) !== fR) passes = false;
+                if (fC && props.Comuna !== fC) passes = false;
+                if (fP && props.Proponente !== fP) passes = false;
+                if (fE && props.Estado_per !== fE) passes = false;
 
-            // Ajustar vista si hay resultados
+                if (passes) {
+                    // Dibujar polígono
+                    const coords = feature.geometry.coordinates;
+                    const ring = coords[0];
+                    const latLngs = ring.map(coord => [coord[1], coord[0]]);
+                    
+                    const polygon = L.polygon(latLngs, {
+                        color: '#166FDD',
+                        weight: 2,
+                        opacity: 0.8,
+                        fillColor: '#166FDD',
+                        fillOpacity: 0.15,
+                        className: 'data-polygon'
+                    });
+                    polygon.bindPopup(createPopupHTML(props), {
+                        className: 'custom-leaflet-popup',
+                        maxWidth: 320,
+                        minWidth: 200
+                    });
+                    polygon.featureData = feature;
+                    polygonLayerGroup.addLayer(polygon);
+                }
+            });
+
             if (filteredMarkers.length > 0) {
+                markerClusterGroup.addLayers(filteredMarkers);
                 const bounds = L.latLngBounds(
                     filteredMarkers.map(m => m.getLatLng())
                 );
@@ -515,13 +884,15 @@
             document.getElementById('empresaCount').textContent = `${sortedProps.length} titulares`;
 
             if (sortedProps.length === 0) {
-                companyListEl.innerHTML = '<div class="text-xs text-[#7e7576] text-center py-4">No hay empresas bajo el filtro</div>';
+                companyListEl.innerHTML =
+                    '<div class="text-xs text-[#7e7576] text-center py-4">No hay empresas bajo el filtro</div>';
                 return;
             }
 
             sortedProps.forEach(([empresa, count], idx) => {
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between p-2 bg-white border border-[#166FDD]/30 hover:border-[#166FDD] hover:bg-[#f9f9f9] cursor-pointer transition-colors';
+                item.className =
+                    'flex items-center justify-between p-2 bg-white border border-[#166FDD]/30 hover:border-[#166FDD] hover:bg-[#f9f9f9] cursor-pointer transition-colors';
                 item.title = `Filtrar por ${empresa}`;
 
                 item.onclick = () => {
