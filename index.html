@@ -614,31 +614,54 @@
             `;
         }
 
-        // ================== CALCULAR CENTROIDE DE UN POLÍGONO ==================
-        function getPolygonCenter(coordinates) {
-            // La primera coordenada es el anillo exterior
+        // ================== CALCULAR CENTROIDE REAL DE UN POLÍGONO (Centro de Masa) ==================
+        function getPolygonCentroid(coordinates) {
+            // Extraer el anillo exterior
             const ring = coordinates[0];
-            let latSum = 0,
-                lngSum = 0;
-            let count = 0;
-
-            // Eliminar el último punto si es igual al primero (cierre del polígono)
-            const points = ring.length > 0 && 
+            
+            // Si el polígono está cerrado, eliminar el último punto
+            let points = ring;
+            if (ring.length > 0 && 
                 ring[0][0] === ring[ring.length - 1][0] && 
-                ring[0][1] === ring[ring.length - 1][1] ? 
-                ring.slice(0, -1) : ring;
+                ring[0][1] === ring[ring.length - 1][1]) {
+                points = ring.slice(0, -1);
+            }
 
-            points.forEach(coord => {
+            let area = 0;
+            let cx = 0;
+            let cy = 0;
+            const n = points.length;
+
+            for (let i = 0; i < n; i++) {
+                const j = (i + 1) % n;
                 // coord = [lng, lat, 0, null]
-                lngSum += coord[0];
-                latSum += coord[1];
-                count++;
-            });
+                const xi = points[i][0];
+                const yi = points[i][1];
+                const xj = points[j][0];
+                const yj = points[j][1];
+                
+                const cross = xi * yj - xj * yi;
+                area += cross;
+                cx += (xi + xj) * cross;
+                cy += (yi + yj) * cross;
+            }
 
-            return {
-                lat: latSum / count,
-                lng: lngSum / count
-            };
+            area = area / 2;
+            // Para evitar división por cero
+            if (Math.abs(area) < 1e-10) {
+                // Fallback: promedio simple
+                let latSum = 0, lngSum = 0;
+                points.forEach(coord => {
+                    lngSum += coord[0];
+                    latSum += coord[1];
+                });
+                return { lat: latSum / n, lng: lngSum / n };
+            }
+
+            cx = cx / (6 * area);
+            cy = cy / (6 * area);
+
+            return { lat: cy, lng: cx };
         }
 
         // ================== INICIALIZACIÓN ==================
@@ -728,9 +751,7 @@
                 }
 
                 // ====== 1. DIBUJAR EL POLÍGONO ======
-                // Extraer el anillo exterior (coords[0])
                 const ring = coords[0];
-                // Limpiar las coordenadas: [lng, lat, 0, null] -> [lat, lng]
                 const latLngs = ring.map(coord => [coord[1], coord[0]]);
                 
                 const polygon = L.polygon(latLngs, {
@@ -742,19 +763,17 @@
                     className: 'data-polygon'
                 });
 
-                // Añadir popup al polígono
                 polygon.bindPopup(createPopupHTML(props), {
                     className: 'custom-leaflet-popup',
                     maxWidth: 320,
                     minWidth: 200
                 });
 
-                // Guardar datos en el polígono para filtros
                 polygon.featureData = feature;
                 polygonLayerGroup.addLayer(polygon);
 
-                // ====== 2. CREAR MARCADOR EN EL CENTROIDE ======
-                const center = getPolygonCenter(coords);
+                // ====== 2. CREAR MARCADOR EN EL CENTROIDE REAL ======
+                const center = getPolygonCentroid(coords);
 
                 const markerIcon = L.divIcon({
                     className: 'data-marker',
@@ -809,11 +828,9 @@
                 return true;
             });
 
-            // Limpiar capas
             markerClusterGroup.clearLayers();
             polygonLayerGroup.clearLayers();
 
-            // Filtrar marcadores
             const filteredMarkers = allMarkers.filter(marker => {
                 const props = marker.featureData.properties;
                 if (fR && (props.Región || props.Regin) !== fR) return false;
@@ -823,10 +840,8 @@
                 return true;
             });
 
-            // Volver a dibujar polígonos y marcadores filtrados
             featuresData.forEach((feature) => {
                 const props = feature.properties;
-                // Verificar si el feature pasa el filtro
                 let passes = true;
                 if (fR && (props.Región || props.Regin) !== fR) passes = false;
                 if (fC && props.Comuna !== fC) passes = false;
@@ -834,7 +849,6 @@
                 if (fE && props.Estado_per !== fE) passes = false;
 
                 if (passes) {
-                    // Dibujar polígono
                     const coords = feature.geometry.coordinates;
                     const ring = coords[0];
                     const latLngs = ring.map(coord => [coord[1], coord[0]]);
