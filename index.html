@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Centers</title>
+    <title>Catastro de Data Centers · Chile</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -313,7 +313,7 @@
                         <div><b class="text-[#1a1c1c]">Empresa:</b> ${props.Proponente || 'N/A'}</div>
                         <div><b class="text-[#1a1c1c]">Comuna:</b> ${props.Comuna || 'N/A'}</div>
                         <div><b class="text-[#1a1c1c]">Región:</b> ${props.Región || props.Regin || 'N/A'}</div>
-                        <div><b class="text-[#1a1c1c]">Combustible:</b> ${props.Combustibl ? fmt(props.Combustibl) + ' m³' : 'N/A'}</div>
+                        <div><b class="text-[#1a1c1c]">Combustible:</b> <span class="font-bold text-[#F66C1A]">${props.Combustibl ? fmt(props.Combustibl) + ' toneladas' : 'N/A'}</span></div>
                         <div><b class="text-[#1a1c1c]">Fecha:</b> ${formatDate(props.Fecha_pres)}</div>
                     </div>
                 </div>
